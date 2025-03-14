@@ -3,6 +3,9 @@ from django.http import JsonResponse
 from .models import RideRequest
 from django.contrib.auth.decorators import login_required
 import json
+from channels.layers import get_channel_layer #type:ignore
+from asgiref.sync import async_to_sync
+
 
 @csrf_exempt
 @login_required
@@ -19,11 +22,21 @@ def request_ride(request):
         if not from_location or not to_location:
             return JsonResponse({'error': 'Missing location details'}, status=400)
 
-        # Calculate price (basic example: 10 currency units per km)
+        # Calculate price (simple example)
         distance = calculate_distance(from_location, to_location)
-        price = distance * 10  # Example rate
+        price = distance * 10  
 
         ride = RideRequest.objects.create(customer=user, from_location=from_location, to_location=to_location, price=price)
+
+        # Notify all drivers via WebSockets
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            "ride_requests",
+            {
+                "type": "new_ride",
+                "message": f"New ride request from {user.email}!"
+            }
+        )
 
         return JsonResponse({'message': 'Ride requested successfully', 'ride_id': ride.id})
     

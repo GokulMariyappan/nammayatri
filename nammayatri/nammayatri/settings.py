@@ -37,10 +37,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
     'backend'
 ]
 
 AUTH_USER_MODEL = 'backend.CustomUser'
+ASGI_APPLICATION = 'nammayatri.asgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",  # For local development
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
