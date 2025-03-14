@@ -37,7 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'backend'
 ]
+
+AUTH_USER_MODEL = 'backend.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -50,6 +53,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'nammayatri.urls'
+AUTHENTICATION_BACKENDS = ['path.to.EmailAuthBackend']
+
 
 TEMPLATES = [
     {
@@ -75,8 +80,12 @@ WSGI_APPLICATION = 'nammayatri.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'nammayatridb',
+        'USER': 'root',
+        'PASSWORD': '1011',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
