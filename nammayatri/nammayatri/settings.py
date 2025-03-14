@@ -53,7 +53,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'nammayatri.urls'
-AUTHENTICATION_BACKENDS = ['path.to.EmailAuthBackend']
+AUTHENTICATION_BACKENDS = ['nammayatri.emailauth.EmailAuthBackend']
 
 
 TEMPLATES = [
