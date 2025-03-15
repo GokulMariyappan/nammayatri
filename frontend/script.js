@@ -25,14 +25,19 @@ function login() {
             alert(data.error);
         } else {
             alert('Login successful!');
-            getUserRole(email);
+            console.log(data);
+                if(data.user.role === 'customer') window.location.href = "customer.html";
+                else {
+                    window.location.href = "driver.html";
+                    fetchAvailableRides();
+                }
         }
     });
 }
 
 // Get User Role
 function getUserRole(email) {
-    fetch(`http://localhost:8000/get-user-role/?email=${email}`)
+    fetch(`http://localhost:8000/get-user-role/${email}`)
     .then(response => response.json())
     .then(data => {
         userRole = data.role;
@@ -40,7 +45,7 @@ function getUserRole(email) {
             document.getElementById('customer-section').style.display = 'block';
         } else if (userRole === 'driver') {
             document.getElementById('driver-section').style.display = 'block';
-            fetchAvailableRides();
+           
         }
     });
 }

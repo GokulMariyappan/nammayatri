@@ -45,7 +45,7 @@ def calculate_distance(from_location, to_location):
     return 5.0  # Example: fixed 5 km for now (can be replaced with Google Maps API)
 
 
-@login_required
+
 def available_rides(request):
     if request.user.role != 'driver':
         return JsonResponse({'error': 'Only drivers can see ride requests'}, status=403)
@@ -55,7 +55,6 @@ def available_rides(request):
     return JsonResponse({'available_rides': list(rides)})
 
 @csrf_exempt
-@login_required
 def accept_ride(request, ride_id):
     if request.method == 'POST':
         user = request.user
