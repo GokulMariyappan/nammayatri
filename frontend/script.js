@@ -13,6 +13,20 @@ document.addEventListener("DOMContentLoaded", function () {
     var dropoffMarker = null;
     var routingControl = null;
 
+    function getLocationName(lat, lng, callback) {
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.display_name) {
+                    callback(data.display_name);
+                } else {
+                    callback("Unknown location");
+                }
+            })
+            .catch(() => callback("Error fetching location"));
+    }
+
+
     // Handle map click to set Pickup & Drop-off
     map.on('click', function(e) {
         if (!pickupMarker) {
@@ -20,9 +34,17 @@ document.addEventListener("DOMContentLoaded", function () {
             pickupMarker = L.marker(e.latlng, { draggable: true }).addTo(map)
                 .bindPopup("📍 Pickup Location").openPopup();
             document.getElementById('from').value = `Lat: ${e.latlng.lat}, Lng: ${e.latlng.lng}`;
+            getLocationName(e.latlng.lat, e.latlng.lng, function(address) {
+                document.getElementById('word_from').value = address;
+            });
+
             
             // Event listener for dragging
             pickupMarker.on('dragend', function() {
+                let newLatLng = pickupMarker.getLatLng();
+                getLocationName(newLatLng.lat, newLatLng.lng, function(address) {
+                    document.getElementById('word_from').value = address;
+                });
                 document.getElementById('from').value = `Lat: ${pickupMarker.getLatLng().lat}, Lng: ${pickupMarker.getLatLng().lng}`;
                 drawRoute(); // Update route
             });
@@ -31,10 +53,19 @@ document.addEventListener("DOMContentLoaded", function () {
             dropoffMarker = L.marker(e.latlng, { draggable: true }).addTo(map)
                 .bindPopup("📍 Drop-off Location").openPopup();
             document.getElementById('to').value = `Lat: ${e.latlng.lat}, Lng: ${e.latlng.lng}`;
+            getLocationName(e.latlng.lat, e.latlng.lng, function(address) {
+                document.getElementById('word_to').value = address;
+            });
+
 
             // Event listener for dragging
             dropoffMarker.on('dragend', function() {
+                let newLatLng = dropoffMarker.getLatLng();
                 document.getElementById('to').value = `Lat: ${dropoffMarker.getLatLng().lat}, Lng: ${dropoffMarker.getLatLng().lng}`;
+                getLocationName(newLatLng.lat, newLatLng.lng, function(address) {
+                    document.getElementById('word_to').value = address;
+                });
+
                 drawRoute(); // Update route
             });
 
@@ -133,12 +164,14 @@ function login() {
 function requestRide() {
     const from = document.getElementById('from').value;
     const to = document.getElementById('to').value;
+    const word_from = document.getElementById('word_from').value;
+    const word_to = document.getElementById('word_to').value;
     const user = JSON.parse(localStorage.getItem('user'));
 
     fetch('http://localhost:8000/request-ride/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ from_location: from, to_location: to, user: user })
+        body: JSON.stringify({ from_location: from, to_location: to, user: user, word_from: word_from, word_to : word_to })
     })
     .then(response => response.json())
     .then(data => {

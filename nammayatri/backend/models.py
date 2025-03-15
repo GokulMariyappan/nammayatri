@@ -41,10 +41,16 @@ class RideRequest(models.Model):
     driver = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='accepted_rides')
     from_location = models.CharField(max_length=255)
     to_location = models.CharField(max_length=255)
+    worded_from_location = models.CharField(max_length=500, null = True)
+    worded_to_location = models.CharField(max_length= 500, null = True)
     price = models.DecimalField(max_digits=6, decimal_places=2)
+    zone = models.CharField(max_length=20, default='normal')
     status = models.CharField(max_length=10, choices=[('pending', 'Pending'), ('accepted', 'Accepted')], default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
 
+class Token(models.Model):
+    driver = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    tokens = models.IntegerField()
 
 
 

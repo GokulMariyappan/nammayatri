@@ -142,8 +142,11 @@ body {
             </div>
 
             <div class="input-fields">
-                <input type="text" id="from" placeholder="📍 Pickup Location" readonly>
-                <input type="text" id="to" placeholder="📍 Drop-off Location" readonly>
+                <input  type="text" id="word_from" placeholder="📍 Pickup Location" readonly>
+                <input  type="text" id="word_to" placeholder="📍 Drop-off Location" readonly>
+                
+                <input style="display: none;" type="text" id="from" placeholder="📍 Pickup Location" readonly>
+                <input style="display: none;" type="text" id="to" placeholder="📍 Drop-off Location" readonly>
                 <button class="book-now" onclick="requestRide()">Book Now</button>
             </div>
         </div>

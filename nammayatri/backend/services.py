@@ -20,6 +20,8 @@ def request_ride(request):
         data = json.loads(request.body)
         from_location = data.get("from_location")
         to_location = data.get("to_location")
+        worded_from_location = data.get("word_from")
+        worded_to_location = data.get('word_to')
         ruser = data.get("user")
 
         if not from_location or not to_location:
@@ -32,7 +34,7 @@ def request_ride(request):
         price = distance * 10  
 
         # Create ride request
-        ride = RideRequest.objects.create(customer=user, from_location=from_location, to_location=to_location, price=price)
+        ride = RideRequest.objects.create(customer=user, from_location=from_location, to_location=to_location, worded_from_location = worded_from_location, worded_to_location = worded_to_location, price=price)
 
         # Notify all drivers via WebSockets
         channel_layer = get_channel_layer()
