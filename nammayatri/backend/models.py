@@ -6,8 +6,7 @@ class CustomUser(AbstractUser):
         ('customer', 'Customer'),
         ('driver', 'Driver'),
     ]
-    
-    username = None
+    username = models.CharField(max_length = 20 , null=True)
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='customer')
 

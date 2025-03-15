@@ -5,8 +5,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 import json
-
-User = get_user_model()
+from .models import CustomUser
 
 @csrf_exempt
 def register(request):
@@ -17,10 +16,12 @@ def register(request):
         password = data.get('password')
         role = data.get('role')
         
-        if not (email and username and password and role):
+        if not (email and password and role and username):
             return JsonResponse({'error': 'Missing fields'}, status=400)
         
-        user = User.objects.create_user(email=email, username=username, password=password, role=role)
+        user = CustomUser.objects.create_user(email=email, password=password)
+        user.role = role  # Assign role separately if it's a model field
+        user.save()
         return JsonResponse({'message': 'User registered successfully'})
 
 @csrf_exempt

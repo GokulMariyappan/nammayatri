@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Booking System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Auto Booking System</h1>
+
+    <div id="auth-section">
+        <h2>Login</h2>
+        <input type="email" id="email" placeholder="Enter email">
+        <input type="password" id="password" placeholder="Enter password">
+        <button onclick="login()">Login</button>
+    </div>
+
+    <h2>Register</h2>
+    <input type="text" id="register-username" placeholder="Enter username">
+    <input type="email" id="register-email" placeholder="Enter email">
+    <input type="password" id="register-password" placeholder="Enter password">
+    <select id="register-role">
+        <option value="customer">Customer</option>
+        <option value="driver">Driver</option>
+    </select>
+    <button onclick="register()">Register</button>
+
+    <div id="customer-section" style="display: none;">
+        <h2>Request a Ride</h2>
+        <input type="text" id="from" placeholder="From location">
+        <input type="text" id="to" placeholder="To location">
+        <button onclick="requestRide()">Request Ride</button>
+    </div>
+
+    <div id="driver-section" style="display: none;">
+        <h2>Available Rides</h2>
+        <ul id="ride-list"></ul>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
