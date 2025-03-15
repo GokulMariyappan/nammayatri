@@ -11,5 +11,6 @@ urlpatterns = [
     path("register/", register, name="register"),  
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),
-    path("get-user-role/<str:email>", GetEmail.as_view(), name = "getEmail")
+    path("get-user-role/<str:email>", GetEmail.as_view(), name = "getEmail"),
+    path('ai-testing', ModelTesting.as_view(), name = "testai")
 ]
