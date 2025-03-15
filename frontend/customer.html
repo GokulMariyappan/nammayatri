@@ -4,14 +4,163 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hello yatri</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+    <style>
+        /* General Page Styling */
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f4f4f4;
+}
+
+/* Container Layout */
+.container {
+    display: flex;
+    width: 90%;
+    height: 90vh;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Left Section (Booking Form) */
+.left-section {
+    width: 35%;
+    padding: 20px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.auth-buttons button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* Ride Selection Buttons */
+.ride-options {
+    display: flex;
+    gap: 10px;
+}
+
+.ride-btn {
+    flex: 1;
+    padding: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    background: #e0e0e0;
+}
+
+.ride-btn.active {
+    background: #007bff;
+    color: white;
+}
+
+/* Input Fields */
+.input-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-fields input, .book-now {
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.book-now {
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.book-now:hover {
+    background: #0056b3;
+}
+
+/* Right Section (Map) */
+.right-section {
+    width: 65%;
+    background: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position:relative;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+    </style>
 </head>
 <body>
-    <div id="customer-section" >
+
+    <div class="container">
+        <!-- Left Section (Booking Form) -->
+        <div class="left-section">
+            <div class="header">
+                <h1>🚖 RideEase</h1>
+                <div class="auth-buttons">
+                    <button class="sign-in">Sign In</button>
+                    <button class="register">Register</button>
+                </div>
+            </div>
+
+            <div class="ride-options">
+                <button class="ride-btn active" id="bookRide">🚗 Book Ride</button>
+                <button class="ride-btn" id="poolRide">🤝 Pool Ride</button>
+            </div>
+
+            <div class="input-fields">
+                <input type="text" id="from" placeholder="📍 Pickup Location" readonly>
+                <input type="text" id="to" placeholder="📍 Drop-off Location" readonly>
+                <button class="book-now" onclick="requestRide()">Book Now</button>
+            </div>
+        </div>
+
+        <!-- Right Section (Map) -->
+        <div class="right-section">
+            <div id="map"></div>
+        </div>
+    </div>
+
+
+    <!-- <div id="customer-section" >
         <h2>Request a Ride</h2>
         <input type="text" id="from" placeholder="From location">
         <input type="text" id="to" placeholder="To location">
         <button onclick="requestRide()">Request Ride</button>
-    </div>
+    </div> -->
     <script src="script.js"></script>
 </body>
 </html>
