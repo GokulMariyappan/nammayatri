@@ -1,7 +1,10 @@
+var map;
+var routingControl;
+
 document.addEventListener("DOMContentLoaded", function () {
     // Initialize the map
     
-    var map = L.map('map').setView([12.9716, 77.5946], 12); // Default: Bangalore
+    map = L.map('map').setView([12.9716, 77.5946], 12); // Default: Bangalore
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
@@ -202,6 +205,7 @@ function acceptRide(rideId) {
         console.log(latLng1); // Outputs: LatLng(48.72387, 98.49849568)
         console.log(latLng2); 
         fetchAvailableRides();
+        initializeMap(latLng1,latLng2);
     });
 }
 
@@ -228,57 +232,25 @@ function register() {
 }
 
 
-function initializeMap() {
+function initializeMap(latLng1, latLng2) {
     // Initialize the map
-    var map = L.map('map').setView([12.9716, 77.5946], 12); // Default: Bangalore
+    console.log(map);
+    map.setView(latLng1, 15); // Default: Bangalore
     
     // Load OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+    
 
     // Pickup and Drop-off Markers (Initially hidden)
-    var pickupMarker = null;
-    var dropoffMarker = null;
+    var pickupMarker = L.marker(latLng1, { draggable: true }).addTo(map).bindPopup("📍 Pickup Location").openPopup();
+    var dropoffMarker = L.marker(latLng2, { draggable: true }).addTo(map).bindPopup("📍 Drop-off Location").openPopup();
     var routingControl = null;
 
-    // Handle map click to set Pickup & Drop-off
-    map.on('click', function(e) {
-        if (!pickupMarker) {
-            // Set pickup point
-            pickupMarker = L.marker(e.latlng, { draggable: true }).addTo(map)
-                .bindPopup("📍 Pickup Location").openPopup();
-            document.getElementById('from').value = `Lat: ${e.latlng.lat}, Lng: ${e.latlng.lng}`;
-            
-            // Event listener for dragging
-            pickupMarker.on('dragend', function() {
-                document.getElementById('from').value = `Lat: ${pickupMarker.getLatLng().lat}, Lng: ${pickupMarker.getLatLng().lng}`;
-                drawRoute(); // Update route
-            });
-        } else if (!dropoffMarker) {
-            // Set drop-off point
-            dropoffMarker = L.marker(e.latlng, { draggable: true }).addTo(map)
-                .bindPopup("📍 Drop-off Location").openPopup();
-            document.getElementById('to').value = `Lat: ${e.latlng.lat}, Lng: ${e.latlng.lng}`;
-
-            // Event listener for dragging
-            dropoffMarker.on('dragend', function() {
-                document.getElementById('to').value = `Lat: ${dropoffMarker.getLatLng().lat}, Lng: ${dropoffMarker.getLatLng().lng}`;
-                drawRoute(); // Update route
-            });
-
-            // Draw route automatically
-            drawRoute();
-        }
-    });
+    drawRoute();
 
     // Function to draw shortest route
     function drawRoute() {
         if (pickupMarker && dropoffMarker) {
             // Remove existing route
-            if (routingControl) {
-                map.removeControl(routingControl);
-            }
 
             // Draw new route using Leaflet Routing Machine
             routingControl = L.Routing.control({
@@ -293,5 +265,37 @@ function initializeMap() {
                 }
             }).addTo(map);
         }
+
+        var start = latLng1;
+        var destination = latLng2;
+
+        var control = L.Routing.control({
+            waypoints: [start, destination],
+            routeWhileDragging: false
+        }).addTo(map);
+
+        var movingMarker = L.marker(start, { draggable: false }).addTo(map);
+
+        control.on('routesfound', function(e) {
+            var route = e.routes[0].coordinates; // Get the route coordinates
+            var index = 0; // Start from the first point
+            var totalSteps = route.length; // Total points in route
+            var interval = 50000 / totalSteps; // Dynamic interval for smooth movement
+
+            function moveMarker() {
+                if (index < totalSteps) {
+                    movingMarker.setLatLng([route[index].lat, route[index].lng]); // Move marker
+                    index++; // Move to the next coordinate
+                } else {
+                    clearInterval(markerInterval); // Stop when it reaches the destination
+                    console.log("joke done");
+                }
+            }
+
+            // Adjust the interval dynamically for smooth movement
+            var markerInterval = setInterval(moveMarker, interval);
+
+        });
+
     }
 }
