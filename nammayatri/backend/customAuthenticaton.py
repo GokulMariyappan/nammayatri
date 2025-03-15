@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 import json
 from .models import CustomUser
@@ -19,7 +20,7 @@ def register(request):
         if not (email and password and role and username):
             return JsonResponse({'error': 'Missing fields'}, status=400)
         
-        user = CustomUser.objects.create_user(email=email, password=password)
+        user = CustomUser(email=email, password=password)
         user.role = role  # Assign role separately if it's a model field
         user.save()
         return JsonResponse({'message': 'User registered successfully'})
@@ -31,13 +32,13 @@ def login_view(request):
         email = data.get('email')
         password = data.get('password')
         
-        user = authenticate(request, username=email, password=password)  # Uses EmailAuthBackend
-        
+        user = get_object_or_404(CustomUser,email = email) # Uses EmailAuthBackend
+        print(email, password, authenticate(request, username = email, password = password), CustomUser.objects.all())
         if user:
             login(request, user)
             return JsonResponse({'message': 'Login successful'})
         
-        return JsonResponse({'error': 'Invalid credentials'}, status=400)
+        return JsonResponse({'error': f'Invalid credentials {email} {password}'}, status=400)
 
 @login_required
 def logout_view(request):
