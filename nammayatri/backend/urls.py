@@ -5,7 +5,6 @@ from .customAuthenticaton import *
 
 urlpatterns = [
     path('home', HomeView.as_view(), name = "home"),
-    path('accounts/login/?next=/request-ride/', request_ride, name='request_ride'),
     path('request-ride/',request_ride,name = 'afterloginride'),
     path('available-rides/', available_rides, name='available_rides'),
     path('accept-ride/<int:ride_id>/', accept_ride, name='accept_ride'),

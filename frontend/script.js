@@ -13,7 +13,7 @@ socket.onmessage = function(event) {
 function login() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-
+    console.log(email, password);
     fetch('http://localhost:8000/login/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -25,11 +25,11 @@ function login() {
             alert(data.error);
         } else {
             alert('Login successful!');
-            console.log(data);
+            localStorage.setItem('user', JSON.stringify(data.user));
+            console.log(localStorage.getItem('user'));
                 if(data.user.role === 'customer') window.location.href = "customer.html";
                 else {
                     window.location.href = "driver.html";
-                    fetchAvailableRides();
                 }
         }
     });
@@ -54,11 +54,12 @@ function getUserRole(email) {
 function requestRide() {
     const from = document.getElementById('from').value;
     const to = document.getElementById('to').value;
-
+    console.log(JSON.parse(localStorage.getItem('user')));
+    const user = JSON.parse(localStorage.getItem('user'));
     fetch('http://localhost:8000/request-ride/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ from_location: from, to_location: to })
+        body: JSON.stringify({ from_location: from, to_location: to, user : user })
     })
     .then(response => response.json())
     .then(data => {
@@ -68,12 +69,18 @@ function requestRide() {
 
 // Fetch Available Rides for Drivers
 function fetchAvailableRides() {
-    fetch('http://localhost:8000/available-rides/')
+    console.log('this fucntion is called');
+    const user = localStorage.getItem('user');
+    fetch('http://localhost:8000/available-rides/',{
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user : user })
+    })
     .then(response => response.json())
     .then(data => {
         const rideList = document.getElementById('ride-list');
         rideList.innerHTML = '';
-        data.rides.forEach(ride => {
+        data.available_rides.forEach(ride => {
             const li = document.createElement('li');
             li.innerHTML = `From: ${ride.from_location} - To: ${ride.to_location}
                 <button onclick="acceptRide(${ride.id})">Accept</button>`;
@@ -84,7 +91,8 @@ function fetchAvailableRides() {
 
 // Accept a Ride
 function acceptRide(rideId) {
-    fetch(`http://localhost:8000/accept-ride/${rideId}/`, { method: 'POST' })
+    const user = localStorage.getItem('user');
+    fetch(`http://localhost:8000/accept-ride/${rideId}/`, { method: 'POST', body : JSON.stringify({user : user})  })
     .then(response => response.json())
     .then(data => {
         alert('Ride Accepted!');
