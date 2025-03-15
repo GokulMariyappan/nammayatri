@@ -25,51 +25,53 @@ def myfuc():
     month = current_time.month
     is_weekend = 1 if day_of_week >= 5 else 0
 
-    # # --- 2. Get Rain Status from OpenWeatherMap API ---
-    # API_KEY = "YOUR_API_KEY"  # Get from https://openweathermap.org/api
-    # CITY = "Bengaluru,IN"
+    # --- 2. Get Rain Status from OpenWeatherMap API ---
+    import requests
 
-    # def is_raining(api_key, city):
-    #     base_url = "http://api.openweathermap.org/data/2.5/weather"
-    #     params = {
-    #         "q": city,
-    #         "appid": api_key,
-    #         "units": "metric"
-    #     }
+    API_KEY = "f6d2ae613788219162256bec9c095b71"  # Get from https://openweathermap.org/api
+    CITY = "Bengaluru,IN"
+
+    def is_raining(api_key, city):
+        base_url = "http://api.openweathermap.org/data/2.5/weather"
+        params = {
+            "q": city,
+            "appid": api_key,
+            "units": "metric"
+        }
         
-    #     response = requests.get(base_url, params=params).json()
+        try:
+            response = requests.get(base_url, params=params)
+            response.raise_for_status()  # Raise an exception for HTTP errors
+            response = response.json()
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching weather data: {e}")
+            return False, None
         
-    #     # Check for rain in weather conditio, 'ns
-    #     rain_codes = [500, 501, 502, 503, 504, 511, 520, 521, 522, 531]  # Rain-related weather codes
-    #     current_weather = response.get('weather', [{}])[0]
+        # Check for rain in weather conditions
+        rain_codes = [500, 501, 502, 503, 504, 511, 520, 521, 522, 531]  # Rain-related weather codes
+        current_weather = response.get('weather', [{}])[0]
         
-    #     # Check both weather ID and 'rain' key
-    #     return (
-    #         current_weather.get('id') in rain_codes or
-    #         'rain' in current_weather.get('main'').lower() or
-    #         response.get('rain') is not None
-    #     )
+        # Check both weather ID and 'rain' key
+        is_rain = (
+            current_weather.get('id') in rain_codes or
+            current_weather.get('main', '').lower() == 'rain' or
+            response.get('rain', {}).get('1h', 0) > 0
+        )
+        
+        return is_rain, response
 
-    # # Get rainfall status
-    # is_rain = 1 if is_raining(API_KEY, CITY) else 0
-    # rainfall = response.get('rain', {}).get('1h', 0) if is_rain else 0  # Get mm of rain in last hour
 
-    
-
-    # Load the model and feature names **once** at the top (avoiding reload on every request)
-    # --- 3. Prepare Features for Model ---
-    # Correct file paths using BASE_DIR
-
-    # Debugging: Print the expected paths
+    # Example usage
+    is_rain, weather_data = is_raining(API_KEY, CITY)
+    rainfall = weather_data.get('rain', {}).get('1h', 0)  
 
     # Load the files
     model = joblib.load('commuter_model_ward.pkl')
     feature_names = joblib.load('feature_names_ward.pkl')
 
-    print("Model and feature names loaded successfully!")
     # example output
-    rainfall=0
-    is_rain="no"
+    # rainfall=0
+    # is_rain="no"
 
     # --------------------------------changes done down here -----------------------------------------
 
@@ -278,16 +280,87 @@ class ModelTesting(View):
     180: "Whitefield",
     181: "Kadugodi Ext.",
     182: "Jigani Industrial Area",
-    183-243: "Other Wards",
+        183: "Viveknagar",
+    184: "Domlur",
+    185: "Konena Agrahara",
+    186: "Agaram",
+    187: "Vannarpet",
+    188: "Neelasandra",
+    189: "Shanthinagar",
+    190: "Adugodi",
+    191: "Ejipura",
+    192: "Viveknagar",
+    193: "Domlur",
+    194: "Konena Agrahara",
+    195: "Agaram",
+    196: "Vannarpet",
+    197: "Neelasandra",
+    198: "Shanthinagar",
+    199: "Adugodi",
+    200: "Ejipura",
+    201: "Viveknagar",
+    202: "Domlur",
+    203: "Konena Agrahara",
+    204: "Agaram",
+    205: "Vannarpet",
+    206: "Neelasandra",
+    207: "Shanthinagar",
+    208: "Adugodi",
+    209: "Ejipura",
+    210: "Viveknagar",
+    211: "Domlur",
+    212: "Konena Agrahara",
+    213: "Agaram",
+    214: "Vannarpet",
+    215: "Neelasandra",
+    216: "Kaval Byrasandra",
+    217: "Kushal Nagar",
+    218: "Muneshwara Nagar",
+    219: "Devara Jeevanahalli",
+    220: "SK Garden",
+    221: "Sagaya Puram",
+    222: "Pulakeshinagar",
+    223: "Hennur",
+    224: "Nagavara",
+    225: "HBR Layout",
+    226: "Kacharakanahalli",
+    227: "Kammanahalli",
+    228: "Banaswadi",
+    229: "Horamavu",
+    230: "Ramamurthy Nagar",
+    231: "Benniganahalli",
+    232: "Maruthi Seva Nagar",
+    233: "Jeevanahalli",
+    234: "Cox Town",
+    235: "Bharathi Nagar",
+    236: "Shivaji Nagar",
+    237: "Vasanth Nagar",
+    238: "Gandhi Nagar",
+    239: "Subhash Nagar",
+    240: "Okalipuram",
+    241: "Chickpet",
+    242: "Sampangiram Nagar",
+    243: "Shanthala Nagar"
     }
 
 
     def get(self, request):
         dic = {}
         data = myfuc()
+        
+        # Assuming data contains values that are lists or tuples
         for key, value in data.items():
-            dic[key] = int(value)
-        return JsonResponse({'data' : dic})
+            dic[key] = value  # Do not convert to int if value is a list/tuple
+
+        result = {}
+        for city_id, city_name in self.bengaluru_wards.items():
+            if city_id in dic:
+                result[city_name] = dic[city_id][0]  # Access the first element of the list/tuple
+            
+        return JsonResponse({'data': result, "length" : len(result)})
+
+# Iterate over the city_ids and get the corresponding value from city_values
+    
         
 
 class HomeView(View):
