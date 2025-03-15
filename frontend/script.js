@@ -1,12 +1,10 @@
 document.addEventListener("DOMContentLoaded", function () {
     // Initialize the map
-    var map = L.map('map').setView([12.9716, 77.5946], 12); // Default: Bangalore
     
-    // Load OpenStreetMap tiles
+    var map = L.map('map').setView([12.9716, 77.5946], 12); // Default: Bangalore
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
-
     // Pickup and Drop-off Markers (Initially hidden)
     var pickupMarker = null;
     var dropoffMarker = null;
@@ -170,8 +168,10 @@ function fetchAvailableRides() {
 
         data.available_rides.forEach(ride => {
             const li = document.createElement('li');
-            li.innerHTML = `From: ${ride.from_location} - To: ${ride.to_location}
-                <button onclick="acceptRide(${ride.id})">Accept</button>`;
+            li.className = "ride-card";
+            li.style = "list-type : none";
+            li.innerHTML = `<b>From:</b> ${ride.from_location} - To: ${ride.to_location}
+                <button class = "accept-btn" onclick="acceptRide(${ride.id})">Accept</button>`;
             rideList.appendChild(li);
         });
     });
@@ -188,7 +188,19 @@ function acceptRide(rideId) {
     })
     .then(response => response.json())
     .then(data => {
-        alert('Ride Accepted!');
+        alert('Ride Accepted! ' + data.from_location);
+        let locationString1 = data.from_location;
+        let locationString2 = data.to_location;
+        // Extract numbers using regex or split method
+        let [lat1, lng1] = locationString1.match(/[-+]?[0-9]*\.?[0-9]+/g).map(Number);
+        let [lat2, lng2] = locationString2.match(/[-+]?[0-9]*\.?[0-9]+/g).map(Number);
+        // Convert to Leaflet LatLng
+        let latLng1 = L.latLng(lat1, lng1);
+        let latLng2 = L.latLng(lat2, lng2);
+
+
+        console.log(latLng1); // Outputs: LatLng(48.72387, 98.49849568)
+        console.log(latLng2); 
         fetchAvailableRides();
     });
 }
@@ -213,4 +225,73 @@ function register() {
             alert('Registration successful! You can now log in.');
         }
     });
+}
+
+
+function initializeMap() {
+    // Initialize the map
+    var map = L.map('map').setView([12.9716, 77.5946], 12); // Default: Bangalore
+    
+    // Load OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Pickup and Drop-off Markers (Initially hidden)
+    var pickupMarker = null;
+    var dropoffMarker = null;
+    var routingControl = null;
+
+    // Handle map click to set Pickup & Drop-off
+    map.on('click', function(e) {
+        if (!pickupMarker) {
+            // Set pickup point
+            pickupMarker = L.marker(e.latlng, { draggable: true }).addTo(map)
+                .bindPopup("📍 Pickup Location").openPopup();
+            document.getElementById('from').value = `Lat: ${e.latlng.lat}, Lng: ${e.latlng.lng}`;
+            
+            // Event listener for dragging
+            pickupMarker.on('dragend', function() {
+                document.getElementById('from').value = `Lat: ${pickupMarker.getLatLng().lat}, Lng: ${pickupMarker.getLatLng().lng}`;
+                drawRoute(); // Update route
+            });
+        } else if (!dropoffMarker) {
+            // Set drop-off point
+            dropoffMarker = L.marker(e.latlng, { draggable: true }).addTo(map)
+                .bindPopup("📍 Drop-off Location").openPopup();
+            document.getElementById('to').value = `Lat: ${e.latlng.lat}, Lng: ${e.latlng.lng}`;
+
+            // Event listener for dragging
+            dropoffMarker.on('dragend', function() {
+                document.getElementById('to').value = `Lat: ${dropoffMarker.getLatLng().lat}, Lng: ${dropoffMarker.getLatLng().lng}`;
+                drawRoute(); // Update route
+            });
+
+            // Draw route automatically
+            drawRoute();
+        }
+    });
+
+    // Function to draw shortest route
+    function drawRoute() {
+        if (pickupMarker && dropoffMarker) {
+            // Remove existing route
+            if (routingControl) {
+                map.removeControl(routingControl);
+            }
+
+            // Draw new route using Leaflet Routing Machine
+            routingControl = L.Routing.control({
+                waypoints: [
+                    pickupMarker.getLatLng(),
+                    dropoffMarker.getLatLng()
+                ],
+                routeWhileDragging: false,
+                createMarker: function() { return null; }, // Hide default route markers
+                lineOptions: {
+                    styles: [{ color: 'blue', weight: 6 }] // ✅ Blue route with thickness
+                }
+            }).addTo(map);
+        }
+    }
 }

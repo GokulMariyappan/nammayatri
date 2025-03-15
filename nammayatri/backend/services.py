@@ -100,7 +100,7 @@ def accept_ride(request, ride_id):
                 }
             )
 
-            return JsonResponse({"message": "Ride accepted successfully"})
+            return JsonResponse({"message": "Ride accepted successfully", "from_location" : ride.from_location, "to_location" : ride.to_location})
         except RideRequest.DoesNotExist:
             return JsonResponse({"error": "Ride not found or already accepted"}, status=404)
 

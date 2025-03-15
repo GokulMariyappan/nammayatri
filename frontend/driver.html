@@ -3,14 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <!-- Leaflet CSS -->
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+     <!-- Google Fonts & Icons -->
+     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap">
+     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+ 
     <title>Hello driver!</title>
+    <style>
+        /* General Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f5f7fa;
+}
+
+/* Main Container */
+.container {
+    display: flex;
+    width: 95%;
+    height: 92vh;
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Left Section (Organized into Sections) */
+.left-section {
+    width: 35%;
+    padding: 20px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+    border-right: 2px solid #eee;
+}
+
+/* Driver Header */
+.driver-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.driver-header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #007bff;
+}
+
+.menu-btn {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+/* Info Section (Zones & Tokens) */
+.info-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.zone-info, .token-info {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    width: 48%;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Badges */
+.zone-badge {
+    padding: 8px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.token-badge {
+    padding: 8px;
+    background: #ffcc00;
+    color: #222;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Ride Requests Section */
+.rides-section h2 {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.ride-list {
+    overflow-y: auto;
+}
+
+/* Ride Cards */
+.ride-card {
+    background: #fff;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: 0.3s;
+}
+
+.ride-card:hover {
+    background: #f8f9fa;
+}
+
+.accept-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 100%;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.accept-btn:hover {
+    background: #218838;
+}
+
+/* Right Section (Map) */
+.right-section {
+    width: 65%;
+    background: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+}
+ul {
+    list-style-type: none;
+}
+li {
+    list-style-type: none;
+}
+    </style>
 </head>
 <body>
-    <div id="driver-section">
-        <button onclick="fetchAvailableRides()">fetch rides</button>
-        <h2>Available Rides</h2>
-        <ul id="ride-list"></ul>
+    <div class="container">
+        <!-- Left Section -->
+        <div class="left-section">
+            
+            <!-- Header (Driver Info & Menu) -->
+            <div class="driver-header">
+                <h1>🚖 Auto Driver</h1>
+                <button class="menu-btn"><i class="fas fa-bars"></i></button>
+            </div>
+
+            <!-- Zone & Tokens Section -->
+            <div class="info-section">
+                <div class="zone-info">
+                    <h3>📍 Current Zone</h3>
+                    <span id="zone-name" class="zone-badge">Unknown</span>
+                </div>
+                <div class="token-info">
+                    <h3>🎟 Tokens</h3>
+                    <span id="token-count" class="token-badge">0</span>
+                </div>
+            </div>
+
+            <!-- Ride Requests Section -->
+            <div class="rides-section">
+                <h2>🚗 Available Rides</h2>
+                <div id="ride-list" class="ride-list"></div>
+            </div>
+        </div>
+
+        <div class="right-section">
+            <div id="map"></div>
+        </div>
     </div>
+        <div id="driver-section">
+            <button onclick="fetchAvailableRides()">fetch rides</button>
+            <h2>Available Rides</h2>
+            <ul id="ride-list" class = "ride-list"></ul>
+        </div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
