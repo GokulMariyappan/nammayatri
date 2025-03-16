@@ -12,5 +12,6 @@ urlpatterns = [
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),
     path("get-user-role/<str:email>", GetEmail.as_view(), name = "getEmail"),
-    path('ai-testing', ModelTesting.as_view(), name = "testai")
+    path('getData/', ModelTesting.as_view(), name = "testai"),
+    path('getLatLng/<str:ward>', getLatLng.as_view(), name = "geo"),
 ]

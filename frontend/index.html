@@ -4,9 +4,193 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auto Booking System</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="img2.jpg" type="image/x-icon">
+    <style>
+        /* Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+/* General Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    background: #f5f7fa; /* Light Blueish Background */
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container */
+.container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+    transition: 0.3s ease-in-out;
+}
+
+/* App Logo */
+.app-logo {
+    width: 100px;
+    margin-bottom: 10px;
+}
+
+/* Headings */
+h1 {
+    color: #007bff; /* Bright Blue */
+    font-size: 28px;
+    font-weight: 600;
+}
+
+h2 {
+    color: #333;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+/* Toggle Buttons */
+.toggle-buttons {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.toggle-buttons button {
+    width: 48%;
+    padding: 12px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    border-radius: 5px;
+}
+
+/* Active & Hover Effects */
+#show-login {
+    background: #007bff;
+    color: white;
+}
+
+#show-register {
+    background: #ddd;
+    color: #333;
+}
+
+.toggle-buttons button:hover {
+    transform: scale(1.05);
+}
+
+.toggle-buttons button.active {
+    background: #007bff;
+    color: white;
+    box-shadow: 0px 4px 10px rgba(0, 114, 255, 0.4);
+}
+
+/* Input Fields */
+input, select {
+    width: 90%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hover & Focus Effect on Inputs */
+input:focus, select:focus {
+    border-color: #007bff;
+    box-shadow: 0px 0px 8px rgba(0, 114, 255, 0.5);
+}
+
+/* Buttons */
+button {
+    width: 95%;
+    padding: 12px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    margin-top: 10px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Hover Effect for Buttons */
+button:hover {
+    background: #0056b3;
+    transform: scale(1.05);
+    box-shadow: 0px 4px 10px rgba(0, 114, 255, 0.5);
+}
+
+/* Login Spinner */
+.spinner {
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    animation: spin 1s linear infinite;
+    position: absolute;
+    right: 15px;
+}
+
+/* Spinner Animation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+    </style>
 </head>
 <body>
+
+    <div class="container">
+        <!-- App Logo -->
+        <img src="img2.jpg" alt="Auto Booking Logo" class="app-logo">
+
+        <h1>Auto Booking System</h1>
+
+        <!-- Toggle Buttons for Login & Register -->
+        <div class="toggle-buttons">
+            <button id="show-login" class="active" onclick="showLogin()">Login</button>
+            <button id="show-register" onclick="showRegister()">Register</button>
+        </div>
+
+        <!-- Login Section -->
+        <div id="auth-section">
+            <h2>Login</h2>
+            <input type="email" id="email" placeholder="Enter email">
+            <input type="password" id="password" placeholder="Enter password">
+            <button id="login-btn" onclick="login()">
+                <span id="login-text">Login</span>
+                <div id="spinner" class="spinner" style="display: none;"></div>
+            </button>
+        </div>
+
+        <!-- Register Section (Hidden by Default) -->
+        <div id="register-section" style="display: none;">
+            <h2>Register</h2>
+            <input type="text" id="register-username" placeholder="Enter username">
+            <input type="email" id="register-email" placeholder="Enter email">
+            <input type="password" id="register-password" placeholder="Enter password">
+            <select id="register-role">
+                <option value="customer">Customer</option>
+                <option value="driver">Driver</option>
+            </select>
+            <button onclick="register()">Register</button>
+        </div>
+    </div>
+
+
     <h1>Namma Yatri in 144p</h1>
 
     <div id="auth-section">

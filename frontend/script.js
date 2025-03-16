@@ -160,18 +160,56 @@ function login() {
     });
 }
 
+function extractLocation(address) {
+    // Find the position of 'Bengaluru' in the string
+    const bengaluruPos = address.indexOf(", Bengaluru");
+
+    if (bengaluruPos !== -1) {
+        // Extract the substring before 'Bengaluru'
+        const addressBeforeBengaluru = address.slice(0, bengaluruPos).trim();
+
+        // Find the last comma before Bengaluru
+        const lastCommaPos = addressBeforeBengaluru.lastIndexOf(",");
+
+        // Extract the string between the last comma and Bengaluru
+        const location = addressBeforeBengaluru.slice(lastCommaPos + 1).trim();
+        console.log(location);
+        return location;
+    } else {
+        return null; // 'Bengaluru' not found
+    }
+}
+
 // Request a Ride
-function requestRide() {
+async function requestRide() {
     const from = document.getElementById('from').value;
     const to = document.getElementById('to').value;
     const word_from = document.getElementById('word_from').value;
     const word_to = document.getElementById('word_to').value;
     const user = JSON.parse(localStorage.getItem('user'));
+    let ward = extractLocation(word_from);
+            console.log(ward);
+    let zone = "normal";
+    await fetch('http://localhost:8000/getData/')
+        .then(response => response.json())
+        .then(data => {
+            //first 50 elements
+            let arr = Object.keys(data.data);
+            let ward = extractLocation(word_from);
+            console.log(ward);
+            arr.forEach(element => {
+                const processedStr1 = element.replace(/\s/g, '').toLowerCase();
+                const processedStr2 = ward.replace(/\s/g, '').toLowerCase();
+                if(processedStr1 === processedStr2) zone = "red";
+            });
+            if(zone !== "red") zone = "green";
+        }
+        );
 
     fetch('http://localhost:8000/request-ride/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ from_location: from, to_location: to, user: user, word_from: word_from, word_to : word_to })
+        body: JSON.stringify({ from_location: from, to_location: to, user: user, word_from: word_from, word_to : word_to, zone : zone })
     })
     .then(response => response.json())
     .then(data => {
@@ -331,4 +369,22 @@ function initializeMap(latLng1, latLng2) {
         });
 
     }
+}
+
+function showLogin() {
+    document.getElementById('auth-section').style.display = 'block';
+    document.getElementById('register-section').style.display = 'none';
+
+    // Set active button style
+    document.getElementById('show-login').classList.add('active');
+    document.getElementById('show-register').classList.remove('active');
+}
+
+function showRegister() {
+    document.getElementById('auth-section').style.display = 'none';
+    document.getElementById('register-section').style.display = 'block';
+
+    // Set active button style
+    document.getElementById('show-login').classList.remove('active');
+    document.getElementById('show-register').classList.add('active');
 }

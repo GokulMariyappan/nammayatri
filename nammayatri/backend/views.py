@@ -357,7 +357,8 @@ class ModelTesting(View):
             if city_id in dic:
                 result[city_name] = dic[city_id][0]  # Access the first element of the list/tuple
             
-        return JsonResponse({'data': result, "length" : len(result)})
+        sorted_dict = dict(sorted(result.items(), key=lambda item: item[1], reverse=True))
+        return JsonResponse({'data': sorted_dict, "length" : len(sorted_dict)})
 
 # Iterate over the city_ids and get the corresponding value from city_values
     
@@ -373,3 +374,17 @@ class GetEmail(View):
         user = get_object_or_404(CustomUser, email = email)
         r = {'role' : user.role}
         return JsonResponse(r)
+
+
+from geopy.geocoders import Nominatim
+
+
+class getLatLng(View):
+    def get(self, request,ward):
+        geolocator = Nominatim(user_agent="geoapiExercises")
+        location = geolocator.geocode(f"{ward}, Bangalore, Karnataka, India")
+        if location:
+            return JsonResponse({"lat" : location.latitude, "lng" : location.longitude})
+        return None, None
+
+# Example usage

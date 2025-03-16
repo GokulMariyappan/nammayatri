@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="img2.jpg" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <!-- Leaflet CSS -->
      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -177,7 +178,7 @@ li {
             <!-- Zone & Tokens Section -->
             <div class="info-section">
                 <div class="zone-info">
-                    <h3>📍 Current Zone</h3>
+                    <h3>HotSpot Zones!</h3>
                     <span id="zone-name" class="zone-badge">Unknown</span>
                 </div>
                 <div class="token-info">
@@ -198,7 +199,7 @@ li {
         </div>
     </div>
         <div id="driver-section">
-            <button onclick="fetchAvailableRides()">fetch rides</button>
+            <span><button onclick="fetchAvailableRides()">fetch rides</button></span>
             <h2>Available Rides</h2>
             <ul id="ride-list" class = "ride-list"></ul>
         </div>
