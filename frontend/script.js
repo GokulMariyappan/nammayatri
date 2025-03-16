@@ -388,3 +388,20 @@ function showRegister() {
     document.getElementById('show-login').classList.remove('active');
     document.getElementById('show-register').classList.add('active');
 }
+
+function displayHotspotZones(){
+    fetch('http://localhost:8000/getData/')
+    .then(response => response.json())
+    .then(data => {
+        const mhlist = document.getElementById('HotSpot');
+        mhlist.innerHTML = '';
+
+        places = Object.keys(data.data);
+        for(let i = 0; i < 10; i++){
+            const li = document.createElement('p');
+            li.innerHTML = `${places[i]}`;
+            mhlist.appendChild(li);
+        }
+            
+    });
+}

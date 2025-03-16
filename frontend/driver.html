@@ -162,6 +162,10 @@ ul {
 li {
     list-style-type: none;
 }
+
+#myid{
+    text-align: center;
+}
     </style>
 </head>
 <body>
@@ -177,11 +181,11 @@ li {
 
             <!-- Zone & Tokens Section -->
             <div class="info-section">
-                <div class="zone-info">
+                <div id = "HotSpot" class="zone-info">
                     <h3>HotSpot Zones!</h3>
                     <span id="zone-name" class="zone-badge">Unknown</span>
                 </div>
-                <div class="token-info">
+                <div id = "myid" class="token-info">
                     <h3>🎟 Tokens</h3>
                     <span id="token-count" class="token-badge">0</span>
                 </div>
@@ -199,7 +203,7 @@ li {
         </div>
     </div>
         <div id="driver-section">
-            <span><button onclick="fetchAvailableRides()">fetch rides</button></span>
+            <span onclick="displayHotspotZones()"  ><button onclick="fetchAvailableRides()">fetch rides</button></span>
             <h2>Available Rides</h2>
             <ul id="ride-list" class = "ride-list"></ul>
         </div>
