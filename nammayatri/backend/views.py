@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views import View
-from .models import CustomUser
+from .models import CustomUser, Token
 from django.shortcuts import get_object_or_404
 # Create your views here.
 import requests
@@ -375,16 +375,11 @@ class GetEmail(View):
         r = {'role' : user.role}
         return JsonResponse(r)
 
-
-from geopy.geocoders import Nominatim
-
-
-class getLatLng(View):
-    def get(self, request,ward):
-        geolocator = Nominatim(user_agent="geoapiExercises")
-        location = geolocator.geocode(f"{ward}, Bangalore, Karnataka, India")
-        if location:
-            return JsonResponse({"lat" : location.latitude, "lng" : location.longitude})
-        return None, None
-
-# Example usage
+class GetProfit(View):
+    def get(self, request, pk):
+        return JsonResponse({'earning':Token.objects.filter(pk = pk).profit})
+    
+class GetTokens(View):
+    def get(self, request, pk):
+        driver = CustomUser.objects.get(pk = pk)
+        return JsonResponse({'tokens': Token.objects.filter(driver = driver).order_by('-id').first().tokens})

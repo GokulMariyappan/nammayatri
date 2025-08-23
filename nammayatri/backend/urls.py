@@ -13,5 +13,6 @@ urlpatterns = [
     path("logout/", logout_view, name="logout"),
     path("get-user-role/<str:email>", GetEmail.as_view(), name = "getEmail"),
     path('getData/', ModelTesting.as_view(), name = "testai"),
-    path('getLatLng/<str:ward>', getLatLng.as_view(), name = "geo"),
+    path('getearnings/<int:pk>',GetProfit.as_view(),name = "profit"),
+    path('gettokens/<int:pk>/',GetTokens.as_view(), name = "tokens")
 ]

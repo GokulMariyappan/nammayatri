@@ -48,9 +48,11 @@ class RideRequest(models.Model):
     status = models.CharField(max_length=10, choices=[('pending', 'Pending'), ('accepted', 'Accepted')], default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
 
+
 class Token(models.Model):
     driver = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    tokens = models.IntegerField()
+    tokens = models.IntegerField(null=True)
+    profit = models.IntegerField(default=0)
 
 
 

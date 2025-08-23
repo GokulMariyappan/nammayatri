@@ -32,7 +32,7 @@ def login_view(request):
         data = json.loads(request.body)
         email = data.get('email')
         password = data.get('password')
-        
+        print(email, password)
         user = get_object_or_404(CustomUser,email = email) # Uses EmailAuthBackend
         print(email, password, authenticate(request, username = email, password = password), CustomUser.objects.all())
         if user:

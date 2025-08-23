@@ -244,7 +244,7 @@ function fetchAvailableRides() {
             const li = document.createElement('li');
             li.className = "ride-card";
             li.style = "list-type : none";
-            li.innerHTML = `<b>From:</b> ${ride.from_location} - To: ${ride.to_location}
+            li.innerHTML = `<b>From:</b> ${ride.worded_from_location} - To: ${ride.worded_to_location}
                 <button class = "accept-btn" onclick="acceptRide(${ride.id})">Accept</button>`;
             rideList.appendChild(li);
         });
@@ -254,7 +254,6 @@ function fetchAvailableRides() {
 // Accept a Ride
 function acceptRide(rideId) {
     const user = JSON.parse(localStorage.getItem('user'));
-
     fetch(`http://localhost:8000/accept-ride/${rideId}/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -263,6 +262,7 @@ function acceptRide(rideId) {
     .then(response => response.json())
     .then(data => {
         alert('Ride Accepted! ' + data.from_location);
+        localStorage.setItem('profit', data.profit);
         let locationString1 = data.from_location;
         let locationString2 = data.to_location;
         // Extract numbers using regex or split method
@@ -359,7 +359,7 @@ function initializeMap(latLng1, latLng2) {
                     index++; // Move to the next coordinate
                 } else {
                     clearInterval(markerInterval); // Stop when it reaches the destination
-                    console.log("joke done");
+                    alert(`You have earned $${localStorage.getItem('profit')}!`);
                 }
             }
 
@@ -403,5 +403,17 @@ function displayHotspotZones(){
             mhlist.appendChild(li);
         }
             
+    });
+}
+
+function displayTokens(){
+    console.log(JSON.parse(localStorage.getItem('user'))["id"]);
+    fetch(`http://localhost:8000/gettokens/${JSON.parse(localStorage.getItem('user'))["id"]}/`, {
+        method: "GET",
+        headers: { 'Content-Type': 'application/json' }
+    }).then(response => response.json())
+    .then(data => {
+        console.log(data, "calling this shi");
+        document.getElementById('token-count').innerHTML = data.tokens;
     });
 }

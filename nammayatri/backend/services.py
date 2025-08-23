@@ -34,7 +34,7 @@ def calculate_distance(from_location, to_location):
     
     # Distance in kilometers
     distance = R * c
-    return distance  # Fixed 5 km for now
+    return abs(distance)  # Fixed 5 km for now
 
 @csrf_exempt
 def request_ride(request):
@@ -59,10 +59,7 @@ def request_ride(request):
         # Calculate price (basic example)
         distance = calculate_distance(from_location, to_location)
 
-        if zone == "red":
-            price = distance * 20  + 30
-        else:
-            price = distance*20 -30
+        price = distance*20
 
         # Create ride request
         ride = RideRequest.objects.create(customer=user, from_location=from_location, to_location=to_location, worded_from_location = worded_from_location, worded_to_location = worded_to_location, price=price, zone = zone)
@@ -96,7 +93,7 @@ def get_available_rides(request):
         if user.role != "driver":
             return JsonResponse({"error": "Only drivers can see ride requests"}, status=403)
 
-        rides = RideRequest.objects.filter(status="pending").values("id", "customer__email", "from_location", "to_location", "price")
+        rides = RideRequest.objects.filter(status="pending").values("id", "customer__email", "worded_from_location", "worded_to_location", "price")
         
         return JsonResponse({"available_rides": list(rides)})
 
@@ -122,14 +119,19 @@ def accept_ride(request, ride_id):
             ride.status = "accepted"
             ride.driver = user
             ride.save()
+            try:
+                tobj = Token.objects.filter(driver = user).order_by('-id').first()
 
-            # if(ride.zone == 'green'):
-            #     tokenobj = get_object_or_404(Token,  driver = user)
-            #     if(tokenobj.tokens):
-            #         if(tokenobj.tokens == 6):
-            #             tokenobj.tokens = 0
-            #         tokenobj.tokens += 1
-            #     tokenobj.tokens = 1
+            except:
+                tobj = Token.objects.create(driver = user, tokens = 0)
+                print("we are here again")
+            print(tobj.driver, tobj.tokens, tobj.profit)
+            tobj.tokens  = (tobj.tokens + 1) % 6
+            if(ride.zone == 'green'):
+                tobj.profit = float(ride.price)
+            else:
+                tobj.profit = float(ride.price) - float(ride.price)*0.15
+            tobj.save()
 
             # Notify the customer via WebSockets
             channel_layer = get_channel_layer()
@@ -141,9 +143,10 @@ def accept_ride(request, ride_id):
                 }
             )
 
-            return JsonResponse({"message": "Ride accepted successfully", "from_location" : ride.from_location, "to_location" : ride.to_location})
+            return JsonResponse({"message": "Ride accepted successfully", "from_location" : ride.from_location, "to_location" : ride.to_location, "profit": tobj.profit})
         except RideRequest.DoesNotExist:
             return JsonResponse({"error": "Ride not found or already accepted"}, status=404)
 
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON data"}, status=400)
+    

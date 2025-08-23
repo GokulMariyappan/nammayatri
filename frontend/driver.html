@@ -185,7 +185,7 @@ li {
                     <h3>HotSpot Zones!</h3>
                     <span id="zone-name" class="zone-badge">Unknown</span>
                 </div>
-                <div id = "myid" class="token-info">
+                <div id = "myid" class="token-info" onclick="displayTokens()">
                     <h3>🎟 Tokens</h3>
                     <span id="token-count" class="token-badge">0</span>
                 </div>
@@ -204,8 +204,6 @@ li {
     </div>
         <div id="driver-section">
             <span onclick="displayHotspotZones()"  ><button onclick="fetchAvailableRides()">fetch rides</button></span>
-            <h2>Available Rides</h2>
-            <ul id="ride-list" class = "ride-list"></ul>
         </div>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
